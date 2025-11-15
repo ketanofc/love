@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Custom CSS for animations and styling */
+        :root {
+            --light-pink: #F8BBD0;
+            --medium-pink: #F48FB1;
+            --dark-pink: #EC407A;
+            --white: #FFFFFF;
+            --parchment: #F9F3E9;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--white);
+            color: #333;
+        }
+
+        .cursive {
+            font-family: 'Pacifico', cursive;
+        }
+
+        .section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            transition: opacity 0.5s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Envelope container reused for heart (responsive) */
+        .mailbox-container {
+            position: relative;
+            width: clamp(200px, 38vw, 300px);
+            height: clamp(160px, 30vw, 240px);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            perspective: 1000px;
+        }
+
+        .mailbox-container:hover {
+            transform: translateY(-2px) scale(1.02) rotateX(2deg);
+        }
+
+        /* Pixel-style red heart (SVG background made of squares) */
+        .pixel-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            background: none;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pixel-heart img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+
+        .mailbox-container.opened .mailbox-slot {
+            transform: translateX(-50%) translateY(6px);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Love Letter Styling */
+        .letter-container {
+            width: 90%;
+            max-width: 500px;
+            background-color: var(--parchment);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .letter-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(249, 243, 233, 1) 0%, rgba(249, 243, 233, 0) 100%);
+            z-index: 1;
+        }
+
+        .letter-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to top, rgba(249, 243, 233, 1) 0%, rgba(249, 243, 233, 0) 100%);
+            z-index: 1;
+        }
+
+        .letter-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 1rem 0;
+            position: relative;
+            z-index: 0;
+        }
+
+        .letter-content::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .letter-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .letter-content::-webkit-scrollbar-thumb {
+            background: var(--light-pink);
+            border-radius: 10px;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--light-pink);
+            opacity: 0.7;
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+        }
+
+        /* Swipe Cards */
+        .cards-container {
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .card:active {
+            cursor: grabbing;
+        }
+
+        .card-image {
+            width: min(80vw, 280px);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-image img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-caption {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #555;
+        }
+
+        .card:nth-child(1) {
+            z-index: 4;
+        }
+
+        .card:nth-child(2) {
+            z-index: 3;
+            transform: scale(0.95) translateY(10px);
+            opacity: 0.9;
+        }
+
+        .card:nth-child(3) {
+            z-index: 2;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0.8;
+        }
+
+        .card:nth-child(4) {
+            z-index: 1;
+            transform: scale(0.85) translateY(30px);
+            opacity: 0.7;
+        }
+
+        .swipe-left {
+            transform: translateX(-100vw) rotate(-20deg);
+            opacity: 0;
+        }
+
+        .swipe-right {
+            transform: translateX(100vw) rotate(20deg);
+            opacity: 0;
+        }
+
+        /* Music Player */
+        .music-player {
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--light-pink);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(244, 143, 177, 0.3);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--medium-pink);
+        }
+
+        .play-btn.playing {
+            animation: pulse 1.5s infinite;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 3px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--medium-pink);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Navigation */
+        .nav-btn {
+            background-color: var(--light-pink);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--medium-pink);
+            transform: translateY(-2px);
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(248, 187, 208, 0.3);
+            animation: bg-float 15s linear infinite;
+        }
+
+        @keyframes bg-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.7;
+            }
+
+            90% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-white">
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Landing Section -->
+    <section id="landing" class="section">
+        <h1 class="text-4xl md:text-5xl cursive text-pink-500 mb-8 text-center">For My Love</h1>
+        <p class="text-lg text-gray-600 mb-12 text-center max-w-md">A special digital gift made just for you</p>
+
+        <div class="mailbox-container pulse" id="heartBox">
+            <div class="pixel-heart" id="heart">
+                <img src="https://i.ibb.co/gbcD1Jps/0685eb98db4ad79615da344da1248435.jpg" alt="Love placeholder" />
+            </div>
+        </div>
+
+        <p class="text-gray-500 mt-8 text-center">Tap the heart to open your gift</p>
+    </section>
+
+    <!-- Love Letter Section -->
+    <section id="letter" class="section hidden">
+        <h1 class="text-3xl md:text-4xl cursive text-pink-500 mb-6 text-center">My Dearest Love</h1>
+
+        <div class="letter-container">
+            <div class="letter-content" id="letterContent">
+                <p class="mb-4">My love,</p>
+
+                <p class="mb-4">Every day with you feels like a beautiful dream that I never want to wake up from. From
+                    the moment we met, my life has been filled with more joy, laughter, and meaning than I ever thought
+                    possible.</p>
+
+                <p class="mb-4">I cherish the little moments we share - your smile in the morning, the way your eyes
+                    light up when you talk about your passions, the comfort of your hand in mine. These simple things
+                    mean the world to me.</p>
+
+                <p class="mb-4">You've shown me what true love really means - it's in the patience you have with me, the
+                    kindness you show everyone around you, and the unwavering support you give me even on my most
+                    difficult days.</p>
+
+                <p class="mb-4">I promise to always be there for you, to support your dreams, to celebrate your
+                    successes, and to hold you close during challenging times. My love for you grows stronger with each
+                    passing day.</p>
+
+                <p class="mb-4">You are my everything, my best friend, my soulmate. I'm so grateful to have you in my
+                    life.</p>
+
+                <p class="mt-8">Forever yours,</p>
+                <p class="cursive text-pink-500 text-xl">Your pupu</p>
+            </div>
+        </div>
+
+        <button class="nav-btn" id="nextToCards">Continue to Memories</button>
+    </section>
+
+    <!-- Swipe Cards Section -->
+    <section id="cards" class="section hidden">
+        <h1 class="text-3xl md:text-4xl cursive text-pink-500 mb-8 text-center">Our Special Memories</h1>
+        <p class="text-gray-600 mb-8 text-center">Swipe the cards to see our journey together</p>
+
+        <div class="cards-container">
+            <!-- Card 1 -->
+            <div class="card" id="card1">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/gbQPgHBm/04bf96c5-7859-4c8d-8401-c4b46fc2453e.jpg" alt="image1" />
+                </div>
+                <p class="card-caption">The day we first met, my heart knew it had found its home.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card" id="card2">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/qY93YQmF/Kermit-the-frog-hearts.jpg" alt="image2" />
+                </div>
+                <p class="card-caption">Your smile brightens even my darkest days.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card" id="card3">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/7JFyVVwZ/Rapunzel.jpg" alt="image3" />
+                </div>
+                <p class="card-caption">You make every moment magical and unforgettable.</p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card" id="card4">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/j9CTjnyP/5a93db7e-fdc3-460c-9fab-b11b80dc71ae.jpg" alt="Memory 4" />
+                </div>
+                <p class="card-caption">I fall for you more with each passing day.</p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card" id="card5">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/tpPgkKR3/It-s-just-a-hug-The-hug.jpg" alt="image5" />
+                </div>
+                <p class="card-caption">Every chapter with you is my favorite story.</p>
+            </div>
+        </div>
+
+        <div class="flex mt-8 space-x-4">
+            <button class="nav-btn bg-gray-300 text-gray-700" id="swipeLeft">Swipe Left</button>
+            <button class="nav-btn" id="swipeRight">Swipe Right</button>
+        </div>
+    </section>
+
+    <!-- Music Section -->
+    <section id="music" class="section hidden">
+        <h1 class="text-3xl md:text-4xl cursive text-pink-500 mb-6 text-center">Our Song</h1>
+        <p class="text-gray-600 mb-8 text-center max-w-md">A special melody that reminds me of us</p>
+
+        <div class="music-player">
+            <div class="play-btn" id="playBtn">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Our Special Song</h3>
+            <p class="text-gray-600 mb-4">A melody that captures our love</p>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="flex justify-between text-sm text-gray-500">
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <button class="nav-btn mt-8" id="restart">Start Over</button>
+    </section>
+
+    <script>
+        // DOM Elements
+        const landingSection = document.getElementById('landing');
+        const letterSection = document.getElementById('letter');
+        const cardsSection = document.getElementById('cards');
+        const musicSection = document.getElementById('music');
+
+        const heartBox = document.getElementById('heartBox');
+
+        const nextToCardsBtn = document.getElementById('nextToCards');
+        const swipeLeftBtn = document.getElementById('swipeLeft');
+        const swipeRightBtn = document.getElementById('swipeRight');
+        const restartBtn = document.getElementById('restart');
+
+        const playBtn = document.getElementById('playBtn');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+
+        // Audio setup
+        const audio = new Audio();
+        // Using a placeholder audio source - in a real app, you would use a local file
+        audio.src = "https://res.cloudinary.com/arya1/video/upload/v1763181436/vaaroon_lumv7y.mp3";
+
+        // Card elements
+        const cards = Array.from(document.querySelectorAll('.cards-container .card'));
+
+        let currentCardIndex = 0;
+
+        // Initialize the app
+        function init() {
+            createBackgroundHearts();
+            createFloatingHearts();
+
+            // Heart click event
+            heartBox.addEventListener('click', openMailbox);
+
+            // Navigation events
+            nextToCardsBtn.addEventListener('click', () => showSection(cardsSection));
+            swipeLeftBtn.addEventListener('click', () => swipeCard('left'));
+            swipeRightBtn.addEventListener('click', () => swipeCard('right'));
+            restartBtn.addEventListener('click', restartApp);
+
+            // Audio events
+            playBtn.addEventListener('click', togglePlay);
+            audio.addEventListener('loadedmetadata', () => {
+                durationEl.textContent = formatTime(audio.duration);
+            });
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', () => {
+                playBtn.classList.remove('playing');
+                playBtn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+            });
+
+            // Touch events for card swiping
+            setupCardSwipe();
+        }
+
+        // Create background floating hearts
+        function createBackgroundHearts() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const heartsCount = 15;
+
+            for (let i = 0; i < heartsCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = '❤';
+
+                // Random position and animation delay
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDelay = Math.random() * 20 + 's';
+
+                bgAnimation.appendChild(heart);
+            }
+        }
+
+        // Create floating hearts in letter section
+        function createFloatingHearts() {
+            const letterContent = document.getElementById('letterContent');
+            const heartsCount = 8;
+
+            for (let i = 0; i < heartsCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤';
+
+                // Random position and animation delay
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 6 + 's';
+
+                letterContent.appendChild(heart);
+            }
+        }
+
+        // Open mailbox animation
+        function openMailbox() {
+            heartBox.classList.remove('pulse');
+            // Show letter section
+            showSection(letterSection);
+        }
+
+        // Show a specific section and hide others
+        function showSection(section) {
+            // Hide all sections
+            landingSection.classList.add('hidden');
+            letterSection.classList.add('hidden');
+            cardsSection.classList.add('hidden');
+            musicSection.classList.add('hidden');
+
+            // Show the requested section
+            section.classList.remove('hidden');
+
+            // If showing music section, reset cards
+            if (section === musicSection) {
+                resetCards();
+            }
+        }
+
+        // Setup card swipe functionality
+        function setupCardSwipe() {
+            cards.forEach(card => {
+                let startX = 0;
+                let currentX = 0;
+                let isDragging = false;
+
+                card.addEventListener('touchstart', handleTouchStart);
+                card.addEventListener('touchmove', handleTouchMove);
+                card.addEventListener('touchend', handleTouchEnd);
+
+                card.addEventListener('mousedown', handleMouseDown);
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+
+                function handleTouchStart(e) {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                }
+
+                function handleTouchMove(e) {
+                    if (!isDragging) return;
+                    currentX = e.touches[0].clientX - startX;
+                    card.style.transform = `translateX(${currentX}px) rotate(${currentX * 0.1}deg)`;
+                }
+
+                function handleTouchEnd() {
+                    if (!isDragging) return;
+                    isDragging = false;
+
+                    const threshold = 100;
+                    if (Math.abs(currentX) > threshold) {
+                        if (currentX > 0) {
+                            swipeCard('right');
+                        } else {
+                            swipeCard('left');
+                        }
+                    } else {
+                        // Return to original position
+                        card.style.transform = '';
+                    }
+
+                    currentX = 0;
+                }
+
+                function handleMouseDown(e) {
+                    startX = e.clientX;
+                    isDragging = true;
+                    card.style.cursor = 'grabbing';
+                }
+
+                function handleMouseMove(e) {
+                    if (!isDragging) return;
+                    currentX = e.clientX - startX;
+                    card.style.transform = `translateX(${currentX}px) rotate(${currentX * 0.1}deg)`;
+                }
+
+                function handleMouseUp() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    card.style.cursor = 'grab';
+
+                    const threshold = 100;
+                    if (Math.abs(currentX) > threshold) {
+                        if (currentX > 0) {
+                            swipeCard('right');
+                        } else {
+                            swipeCard('left');
+                        }
+                    } else {
+                        // Return to original position
+                        card.style.transform = '';
+                    }
+
+                    currentX = 0;
+                }
+            });
+        }
+
+        // Swipe card in specified direction
+        function swipeCard(direction) {
+            if (currentCardIndex >= cards.length) return;
+
+            const card = cards[currentCardIndex];
+
+            if (direction === 'left') {
+                card.classList.add('swipe-left');
+            } else {
+                card.classList.add('swipe-right');
+            }
+
+            currentCardIndex++;
+
+            // Update other cards position
+            updateCardsPosition();
+
+            // If all cards are swiped, show music section
+            if (currentCardIndex >= cards.length) {
+                setTimeout(() => {
+                    showSection(musicSection);
+                }, 500);
+            }
+        }
+
+        // Update position of remaining cards
+        function updateCardsPosition() {
+            for (let i = 0; i < cards.length; i++) {
+                if (i >= currentCardIndex) {
+                    const offset = i - currentCardIndex;
+                    cards[i].style.zIndex = cards.length - offset;
+                    cards[i].style.transform = `scale(${1 - offset * 0.05}) translateY(${offset * 10}px)`;
+                    cards[i].style.opacity = 1 - offset * 0.1;
+                }
+            }
+        }
+
+        // Reset cards to initial state
+        function resetCards() {
+            currentCardIndex = 0;
+
+            cards.forEach((card, index) => {
+                card.classList.remove('swipe-left', 'swipe-right');
+                card.style.transform = '';
+                card.style.opacity = '';
+                card.style.zIndex = cards.length - index;
+            });
+
+            // Reset the stack
+            updateCardsPosition();
+        }
+
+        // Toggle audio play/pause
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.classList.add('playing');
+                playBtn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+            } else {
+                audio.pause();
+                playBtn.classList.remove('playing');
+                playBtn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+            }
+        }
+
+        // Update progress bar and time
+        function updateProgress() {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = percent + '%';
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+
+        // Format time in mm:ss
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // Restart the app
+        function restartApp() {
+            // Reset heart
+            heartBox.classList.add('pulse');
+
+            // Stop audio
+            audio.pause();
+            audio.currentTime = 0;
+            playBtn.classList.remove('playing');
+            playBtn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+
+            // Show landing section
+            showSection(landingSection);
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+
+</html>
